@@ -1,34 +1,19 @@
-import React, { createContext, useEffect, useRef, useState } from "react";
-import { useMedia } from "./hooks";
+import React, { FormEvent, useState } from "react";
 import { Header } from "./components";
 import styled, { css } from "styled-components";
-import { BrowserRouter, Route, Routes, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { BASE, ROOM_API } from "./api/consts";
 import { showUp } from "./styles/animations";
-import { createPrivateKey } from "crypto";
 import { youtubeRegExp } from "./utils/reg-exp";
 
-//const fetchData = (inputValue: any) => {
-//  fetch(`https://www.googleapis.com/youtube/v3/search?video=${inputValue}&key=${process.env.REACT_APP_GOOGLE_API_KEY}&maxResults=20`, {
-//    headers: {
-//      "Content-Type": "application/json"
-//    }
-//  })
-//    .then(data => data.json())
-//    .then(data => {
-//      setData(data);
-//      console.log(data);
-//    })
-//    .catch(e => console.log(e));
 function App() {
-  const device = useMedia();
-
   const [value, setValue] = useState("");
 
   const navigate = useNavigate();
 
-  const sendData = async () => {
+  const sendData = async (e: FormEvent) => {
+    e.preventDefault();
     const data = await axios.post(
       `${BASE}${ROOM_API}`,
       {
@@ -39,7 +24,6 @@ function App() {
     const {
       data: { key },
     } = data;
-    console.log(data);
     navigate(`/room/${key}`);
   };
 
@@ -54,7 +38,7 @@ function App() {
             to <strong>SYNC</strong>
           </span>
         </DescriptionContainer>
-        <InputContainer>
+        <InputForm onSubmit={sendData}>
           <Input
             placeholder="Youtube Link"
             value={value}
@@ -67,10 +51,11 @@ function App() {
             disabled={!isYoutubeLink}
             isYoutubeLink={isYoutubeLink}
             onClick={sendData}
+            type="submit"
           >
             &larr;
           </Button>
-        </InputContainer>
+        </InputForm>
       </Wrapper>
     </>
   );
@@ -110,7 +95,7 @@ const Input = styled.input`
   }
 `;
 
-const InputContainer = styled.div`
+const InputForm = styled.form`
   border: 1px solid ${(props) => props.theme.colors.primaryGray};
 
   display: flex;

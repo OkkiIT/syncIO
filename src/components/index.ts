@@ -1,5 +1,5 @@
 import { Header } from "./Header";
-import { MessageItem } from "./Message-Item/Message-Item";
-import { ChatForm } from "./Chat-Form";
+import { MessageItem } from "./MessageItem";
+import { ChatForm } from "./ChatForm";
 
 export { Header, MessageItem, ChatForm };

@@ -12,3 +12,13 @@ export const showUp = keyframes`
     filter: none;
   }
 `;
+
+export const skeletonAnimation = `animation: skeleton-loading 700ms linear infinite alternate;
+  @keyframes skeleton-loading {
+    0% {
+      background-color: hsl(0, 1%, 15%);
+    }
+    100% {
+      background-color: hsl(0, 0%, 18%);
+    }
+  }`;
