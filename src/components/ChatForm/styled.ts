@@ -1,6 +1,8 @@
 import styled from "styled-components";
+import { showUp } from "../../styles/animations";
 
 export const ChatForm = styled.form`
+  animation: ${showUp} 1000ms forwards;
   display: flex;
   gap: 10px;
   width: 100%;

@@ -1,5 +1,7 @@
 import styled from "styled-components";
 import { device } from "../styles/media";
+import { ChatForm } from "../components/ChatForm/styled";
+import { showUp, skeletonAnimation } from "../styles/animations";
 
 export const PageContainer = styled.div`
   background-color: ${(props) => props.theme.colors.black};
@@ -8,19 +10,28 @@ export const PageContainer = styled.div`
   height: 100%;
   display: flex;
   flex-direction: column;
-  @media screen and ${device.lg}{
+  @media screen and ${device.lg} {
     flex-direction: row;
   }
 }
 `;
 
 export const PlayerWrapper = styled.div`
+  animation: ${showUp} 1000ms forwards;
   position: relative;
   padding-top: 56.25%;
 
   @media screen and ${device.lg} {
     flex: 1;
   }
+`;
+
+export const SkeletonPlayerWrapper = styled(PlayerWrapper)`
+  ${skeletonAnimation};
+`;
+
+export const SkeletonChatForm = styled(ChatForm)`
+  ${skeletonAnimation};
 `;
 
 export const ChatContainer = styled.div`

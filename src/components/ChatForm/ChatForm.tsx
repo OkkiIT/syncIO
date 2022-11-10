@@ -1,17 +1,14 @@
-import { ChangeEvent, FormEvent, useState } from "react";
+import { ChangeEvent, FormEvent, useState } from 'react';
 
-import * as S from "./styled";
-import { socket } from "../../pages/PlayerPage";
-import { useParams } from "react-router-dom";
-import { getSendingTime } from "../../utils/common";
+import * as S from './styled';
+import { socket } from '../../pages/PlayerPage';
+import { useAsyncValue, useParams } from 'react-router-dom';
+import { getSendingTime } from '../../utils/common';
 
-interface ChatFormProps {
-  userName: string;
-}
-
-export const ChatForm = ({ userName }: ChatFormProps) => {
-  const { id } = useParams();
-  const [message, setMessage] = useState<string>("");
+export const ChatForm = () => {
+  const { userName } = useAsyncValue() as { userName: string };
+  const { id: roomId } = useParams();
+  const [message, setMessage] = useState<string>('');
 
   const emptyMessage = !message.trim();
 
@@ -22,8 +19,8 @@ export const ChatForm = ({ userName }: ChatFormProps) => {
     }
     const sendingTime = getSendingTime();
 
-    socket.emit("chatMessage", { roomId: id, message, userName, sendingTime });
-    setMessage("");
+    socket.emit('chatMessage', { roomId, message, userName, sendingTime });
+    setMessage('');
   };
 
   const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {

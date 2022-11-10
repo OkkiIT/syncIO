@@ -11,11 +11,17 @@ export const GlobalStyles = createGlobalStyle`
     padding: 0;
     box-sizing: border-box;
   }
+  *:before,*:after{
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+  }
 
   button {
     cursor: pointer;
     outline: none;
     background-color: transparent;
+    border: none;
   }
 
   #root {
