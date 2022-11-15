@@ -4,17 +4,18 @@ import {
   Await,
   LoaderFunctionArgs,
 } from 'react-router-dom';
-import { Suspense, useEffect, useRef, useState } from 'react';
+import { FormEvent, Suspense, useEffect, useRef, useState } from 'react';
 import axios from 'axios';
 import ReactPlayer from 'react-player';
-import { BASE, ROOM_API } from '../api/consts';
+import { BASE, ROOM_API } from '../../api/consts';
 import io from 'socket.io-client';
+
 import * as S from './styled';
 import './styles.css';
-import { ChatForm, MessageItem } from '../components';
-import { useChatScroll } from '../hooks';
-import { getCookie } from '../utils/common';
-import { MessageItem as MessageItemType } from '../types/index';
+import { ChatForm, MessageItem, SubmitVideoForm } from '../../components';
+import { useChatScroll } from '../../hooks';
+import { getCookie } from '../../utils/common';
+import { MessageItem as MessageItemType } from '../../types';
 
 export const socket = io(BASE);
 
@@ -32,6 +33,7 @@ interface LoaderData {
 export const PlayerPage = () => {
   const { data, roomId } = useLoaderData() as LoaderData;
   const [isHost] = useState<string>(() => getCookie('roomId'));
+  const [currentVideo, setCurrentVideo] = useState('');
   const [isPlaying, setIsPlaying] = useState(true);
   const playerRef = useRef<ReactPlayer>(null);
   const [messagesList, setMessagesList] = useState<MessageItemType[]>([]);
@@ -39,6 +41,10 @@ export const PlayerPage = () => {
   useEffect(() => {
     socket.on('connect', () => {
       socket.emit('connectRoom', { roomId });
+    });
+
+    socket.on('changeVideo', (msg) => {
+      setCurrentVideo(msg.videoLink);
     });
 
     socket.on('disconnect', () => {});
@@ -75,6 +81,7 @@ export const PlayerPage = () => {
     });
 
     return () => {
+      socket.off('changeVideo');
       socket.off('syncVideo');
       socket.off('connect');
       socket.off('disconnect');
@@ -109,8 +116,20 @@ export const PlayerPage = () => {
   };
   const messageContainerRef = useChatScroll(messagesList);
 
+  const changeCurrentVideo = (e: FormEvent, inputValue: string) => {
+    e.preventDefault();
+    socket.emit('changeVideo', { roomId, videoLink: inputValue.trim() });
+  };
+
   return (
     <S.PageContainer>
+      {isHost && (
+        <SubmitVideoForm
+          inputFormCss={`border:none`}
+          inputCss={'flex:1'}
+          onSubmit={changeCurrentVideo}
+        />
+      )}
       <Suspense fallback={<S.SkeletonPlayerWrapper />}>
         <Await resolve={data}>
           {(resolvedData) => {
@@ -127,7 +146,11 @@ export const PlayerPage = () => {
                   onPlay={playVideo}
                   controls
                   playing={isPlaying}
-                  url={resolvedData.room.currentVideoLink}
+                  url={
+                    !!currentVideo
+                      ? currentVideo
+                      : resolvedData.room.currentVideoLink
+                  }
                 />
               </S.PlayerWrapper>
             );

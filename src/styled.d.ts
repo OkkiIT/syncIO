@@ -1,6 +1,7 @@
-import "styled-components";
+import 'styled-components';
+import {} from 'styled-components/cssprop';
 
-declare module "styled-components" {
+declare module 'styled-components' {
   export interface DefaultTheme {
     colors: {
       white: string;

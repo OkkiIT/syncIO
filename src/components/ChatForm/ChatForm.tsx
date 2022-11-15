@@ -1,7 +1,7 @@
 import { ChangeEvent, FormEvent, useState } from 'react';
 
 import * as S from './styled';
-import { socket } from '../../pages/PlayerPage';
+import { socket } from '../../pages/PlayerPage/PlayerPage';
 import { useAsyncValue, useParams } from 'react-router-dom';
 import { getSendingTime } from '../../utils/common';
 
