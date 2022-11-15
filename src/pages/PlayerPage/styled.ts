@@ -1,7 +1,7 @@
-import styled from "styled-components";
-import { device } from "../styles/media";
-import { ChatForm } from "../components/ChatForm/styled";
-import { showUp, skeletonAnimation } from "../styles/animations";
+import styled from 'styled-components';
+import { device } from '../../styles/media';
+import { ChatForm } from '../../components/ChatForm/styled';
+import { showUp, skeletonAnimation } from '../../styles/animations';
 
 export const PageContainer = styled.div`
   background-color: ${(props) => props.theme.colors.black};
