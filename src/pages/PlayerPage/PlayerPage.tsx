@@ -8,7 +8,7 @@ import { FormEvent, Suspense, useEffect, useRef, useState } from 'react';
 import axios from 'axios';
 import ReactPlayer from 'react-player';
 import { BASE, ROOM_API } from '../../api/consts';
-import io from 'socket.io-client';
+import io, { Socket } from 'socket.io-client';
 
 import * as S from './styled';
 import './styles.css';
@@ -16,8 +16,6 @@ import { ChatForm, MessageItem, SubmitVideoForm } from '../../components';
 import { useChatScroll } from '../../hooks';
 import { getCookie } from '../../utils/common';
 import { MessageItem as MessageItemType } from '../../types';
-
-export const socket = io(BASE);
 
 interface LoaderData {
   data: {
@@ -30,6 +28,8 @@ interface LoaderData {
   roomId: string;
 }
 
+export let socket: Socket;
+
 export const PlayerPage = () => {
   const { data, roomId } = useLoaderData() as LoaderData;
   const [isHost] = useState<string>(() => getCookie('roomId'));
@@ -39,6 +39,7 @@ export const PlayerPage = () => {
   const [messagesList, setMessagesList] = useState<MessageItemType[]>([]);
 
   useEffect(() => {
+    socket = io(BASE);
     socket.on('connect', () => {
       socket.emit('connectRoom', { roomId });
     });
