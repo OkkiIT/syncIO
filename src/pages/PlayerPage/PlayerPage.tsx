@@ -4,18 +4,20 @@ import {
   Await,
   LoaderFunctionArgs,
 } from 'react-router-dom';
-import { FormEvent, Suspense, useEffect, useRef, useState } from 'react';
+import { Suspense } from 'react';
 import axios from 'axios';
 import ReactPlayer from 'react-player';
 import { BASE, ROOM_API } from '../../api/consts';
-import io, { Socket } from 'socket.io-client';
 
 import * as S from './styled';
 import './styles.css';
 import { ChatForm, MessageItem, SubmitVideoForm } from '../../components';
-import { useChatScroll } from '../../hooks';
-import { getCookie } from '../../utils/common';
-import { MessageItem as MessageItemType } from '../../types';
+import {
+  useSocketInit,
+  useVideoChat,
+  useVideoControll,
+  useVideoSync,
+} from '../../hooks';
 
 interface LoaderData {
   data: {
@@ -25,102 +27,21 @@ interface LoaderData {
     };
     userName: string;
   };
-  roomId: string;
 }
 
-export let socket: Socket;
-
 export const PlayerPage = () => {
-  const { data, roomId } = useLoaderData() as LoaderData;
-  const [isHost] = useState<string>(() => getCookie('roomId'));
-  const [currentVideo, setCurrentVideo] = useState('');
-  const [isPlaying, setIsPlaying] = useState(true);
-  const playerRef = useRef<ReactPlayer>(null);
-  const [messagesList, setMessagesList] = useState<MessageItemType[]>([]);
+  const { data } = useLoaderData() as LoaderData;
+  const { socket } = useSocketInit();
 
-  useEffect(() => {
-    socket = io(BASE);
-    socket.on('connect', () => {
-      socket.emit('connectRoom', { roomId });
-    });
+  const { isPlaying, pauseVideo, playVideo, playerRef } =
+    useVideoControll(socket);
 
-    socket.on('changeVideo', (msg) => {
-      setCurrentVideo(msg.videoLink);
-    });
+  const { syncVideo, currentVideo, changeCurrentVideo, isHost } = useVideoSync(
+    socket,
+    playerRef
+  );
 
-    socket.on('disconnect', () => {});
-
-    socket.on('chatMessage', (msg) => {
-      setMessagesList((prev: any) => {
-        return [...prev, msg];
-      });
-    });
-
-    socket.on('pauseVideo', (msg) => {
-      setIsPlaying(false);
-      playerRef?.current?.seekTo(msg.currentTimePlayed, 'seconds');
-    });
-
-    socket.on('playVideo', () => {
-      setIsPlaying(true);
-    });
-
-    socket.on('syncVideo', (msg) => {
-      if (!isHost) {
-        const hostSendTime = msg.sendTime;
-        const hostPlayerTime = +msg.currentTimePlayed;
-        const currentPlayerTime = Number(
-          playerRef?.current?.getCurrentTime() || 1
-        );
-        const receiveTime = Date.now();
-        if (Math.abs(hostPlayerTime - currentPlayerTime) > 1) {
-          playerRef?.current?.seekTo(
-            hostPlayerTime + (Number(receiveTime) - Number(hostSendTime)) / 1000
-          );
-        }
-      }
-    });
-
-    return () => {
-      socket.off('changeVideo');
-      socket.off('syncVideo');
-      socket.off('connect');
-      socket.off('disconnect');
-      socket.off('playVideo');
-      socket.off('pauseVideo');
-      socket.off('chatMessage');
-    };
-  }, []);
-
-  const pauseVideo = () => {
-    socket.emit('pauseVideo', {
-      roomId,
-      currentTimePlayed: playerRef?.current?.getCurrentTime(),
-    });
-  };
-
-  const playVideo = () => {
-    socket.emit('playVideo', {
-      roomId,
-      currentTimePlayed: playerRef?.current?.getCurrentTime(),
-    });
-  };
-
-  const syncVideo = (e: any) => {
-    if (isHost) {
-      socket.emit('syncVideo', {
-        roomId,
-        currentTimePlayed: e.playedSeconds,
-        sendTime: Date.now(),
-      });
-    }
-  };
-  const messageContainerRef = useChatScroll(messagesList);
-
-  const changeCurrentVideo = (e: FormEvent, inputValue: string) => {
-    e.preventDefault();
-    socket.emit('changeVideo', { roomId, videoLink: inputValue.trim() });
-  };
+  const { messagesList, messageContainerRef } = useVideoChat(socket);
 
   return (
     <S.PageContainer>
@@ -166,7 +87,7 @@ export const PlayerPage = () => {
         </S.MessageContainer>
         <Suspense fallback={<S.SkeletonChatForm />}>
           <Await resolve={data}>
-            <ChatForm />
+            <ChatForm socket={socket} />
           </Await>
         </Suspense>
       </S.ChatContainer>
@@ -186,5 +107,5 @@ export const roomLoader = async ({
   params,
 }: LoaderFunctionArgs): Promise<any> => {
   const { id } = params;
-  return defer({ data: dataFetch(id), roomId: id });
+  return defer({ data: dataFetch(id) });
 };
