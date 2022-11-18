@@ -1,9 +1,9 @@
-import styled from "styled-components";
+import styled from 'styled-components';
 
 export const ItemContainer = styled.div`
   display: flex;
   flex-direction: column;
-  border-bottom: 1px solid ${(props) => props.theme.colors.lightBlack};
+  border-bottom: 1px solid ${({ theme }) => theme.colors.lightBlack};
   padding: 5px 0;
 `;
 
@@ -11,7 +11,7 @@ export const Avatar = styled.img`
   width: 25px;
   height: 25px;
   margin-top: 2px;
-  background: ${(props) => props.theme.colors.white};
+  background: ${({ theme }) => theme.colors.white};
   border-radius: 20px;
 `;
 

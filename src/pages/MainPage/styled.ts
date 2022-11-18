@@ -16,27 +16,27 @@ export const DescriptionContainer = styled.div`
   flex-direction: column;
   align-self: flex-start;
   margin-left: 15px;
-  background-color: ${(props) => props.theme.colors.black};
-  color: ${(props) => props.theme.colors.primaryGray};
+  background-color: ${({ theme }) => theme.colors.black};
+  color: ${({ theme }) => theme.colors.primaryGray};
 `;
 
 export const Input = styled.input`
   border: none;
   outline: none;
   background: transparent;
-  color: ${(props) => props.theme.colors.white};
+  color: ${({ theme }) => theme.colors.white};
 
   &::placeholder {
-    color: ${(props) => props.theme.colors.primaryGray};
+    color: ${({ theme }) => theme.colors.primaryGray};
   }
 
   &:focus::placeholder {
-    color: ${(props) => props.theme.colors.white};
+    color: ${({ theme }) => theme.colors.white};
   }
 `;
 
 export const InputForm = styled.form`
-  border: 1px solid ${(props) => props.theme.colors.primaryGray};
+  border: 1px solid ${({ theme }) => theme.colors.primaryGray};
 
   display: flex;
   opacity: 0;
@@ -62,8 +62,8 @@ export const Button = styled.button<ButtonProps>`
   align-items: center;
   transition: 200ms;
 
-  ${(props) =>
-    props.isYoutubeLink &&
+  ${({ isYoutubeLink }) =>
+    isYoutubeLink &&
     css`
       color: green;
       transform: rotate(180deg);
