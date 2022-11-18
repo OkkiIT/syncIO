@@ -1,11 +1,15 @@
 import { ChangeEvent, FormEvent, useState } from 'react';
 
 import * as S from './styled';
-import { socket } from '../../pages/PlayerPage/PlayerPage';
 import { useAsyncValue, useParams } from 'react-router-dom';
 import { getSendingTime } from '../../utils/common';
+import { Socket } from 'socket.io-client';
 
-export const ChatForm = () => {
+interface ChatFormProps {
+  socket: Socket;
+}
+
+export const ChatForm = ({ socket }: ChatFormProps) => {
   const { userName } = useAsyncValue() as { userName: string };
   const { id: roomId } = useParams();
   const [message, setMessage] = useState<string>('');
