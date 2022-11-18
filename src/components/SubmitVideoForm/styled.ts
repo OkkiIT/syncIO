@@ -2,7 +2,7 @@ import styled, { css } from 'styled-components';
 import { showUp } from '../../styles/animations';
 
 export const InputForm = styled.form`
-  border: 1px solid ${(props) => props.theme.colors.primaryGray};
+  border: 1px solid ${({ theme }) => theme.colors.primaryGray};
 
   display: flex;
   opacity: 0;
@@ -16,14 +16,14 @@ export const Input = styled.input`
   border: none;
   outline: none;
   background: transparent;
-  color: ${(props) => props.theme.colors.white};
+  color: ${({ theme }) => theme.colors.white};
 
   &::placeholder {
-    color: ${(props) => props.theme.colors.primaryGray};
+    color: ${({ theme }) => theme.colors.primaryGray};
   }
 
   &:focus::placeholder {
-    color: ${(props) => props.theme.colors.white};
+    color: ${({ theme }) => theme.colors.white};
   }
 `;
 
@@ -43,8 +43,8 @@ export const Button = styled.button<ButtonProps>`
   align-items: center;
   transition: 200ms;
 
-  ${(props) =>
-    props.isYoutubeLink &&
+  ${({ isYoutubeLink }) =>
+    isYoutubeLink &&
     css`
       color: green;
       transform: rotate(180deg);

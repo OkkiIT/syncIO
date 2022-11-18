@@ -4,8 +4,8 @@ import { ChatForm } from '../../components/ChatForm/styled';
 import { showUp, skeletonAnimation } from '../../styles/animations';
 
 export const PageContainer = styled.div`
-  background-color: ${(props) => props.theme.colors.black};
-  color: ${(props) => props.theme.colors.primaryGray};
+  background-color: ${({ theme }) => theme.colors.black};
+  color: ${({ theme }) => theme.colors.primaryGray};
   width: 100%;
   height: 100%;
   display: flex;
@@ -42,7 +42,7 @@ export const ChatContainer = styled.div`
 
   @media screen and ${device.lg} {
     max-width: 300px;
-    border-left: 1px solid ${(props) => props.theme.colors.lightBlack};
+    border-left: 1px solid ${({ theme }) => theme.colors.lightBlack};
   }
 `;
 

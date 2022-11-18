@@ -1,5 +1,5 @@
-import styled from "styled-components";
-import { showUp } from "../../styles/animations";
+import styled from 'styled-components';
+import { showUp } from '../../styles/animations';
 
 export const ChatForm = styled.form`
   animation: ${showUp} 1000ms forwards;
@@ -18,14 +18,14 @@ export const ChatInput = styled.input`
   background: transparent;
 
   &::placeholder {
-    ${(props) => props.theme.colors.white}
+    ${({ theme }) => theme.colors.white}
   }
 `;
 
 export const SendMessageButton = styled.button`
   padding: 0 7px;
   height: 30px;
-  border: 1px solid ${(props) => props.theme.colors.primaryGray};
+  border: 1px solid ${({ theme }) => theme.colors.primaryGray};
   border-radius: 20px;
-  color: ${(props) => props.theme.colors.primaryGray};
+  color: ${({ theme }) => theme.colors.primaryGray};
 `;

@@ -1,10 +1,9 @@
-import styled from "styled-components";
-import { colors } from "../../styles/colors";
-import { showUp } from "../../styles/animations";
+import styled from 'styled-components';
+import { showUp } from '../../styles/animations';
 
 export const Header = styled.header`
   height: 60px;
-  color: ${(props) => props.theme.colors.primaryGray};
+  color: ${({ theme }) => theme.colors.primaryGray};
   background-color: black;
   display: flex;
   justify-content: center;
