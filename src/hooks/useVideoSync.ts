@@ -6,7 +6,8 @@ import { useParams } from 'react-router-dom';
 
 export const useVideoSync = (
   socket: Socket,
-  playerRef: RefObject<ReactPlayer>
+  playerRef: RefObject<ReactPlayer>,
+  setPlaylist: any
 ) => {
   const [currentVideo, setCurrentVideo] = useState<string>('');
   const [isHost] = useState(() => getCookie('roomId'));
@@ -23,14 +24,22 @@ export const useVideoSync = (
     }
   };
 
-  const changeCurrentVideo = (e: FormEvent, inputValue: string) => {
-    e.preventDefault();
-    socket.emit('changeVideo', { roomId, videoLink: inputValue.trim() });
+  const changeCurrentVideo = (videoId: string) => {
+    socket.emit('playVideoFromPlaylist', { roomId, videoId });
+  };
+
+  const deleteVideoFromPlaylist = (videoId: string) => {
+    socket.emit('deleteVideoFromPlaylist', { roomId, videoId });
   };
 
   useEffect(() => {
-    socket.on('changeVideo', (msg) => {
-      setCurrentVideo(msg.videoLink);
+    socket.on('playVideoFromPlaylist', (msg) => {
+      console.log(msg);
+      setCurrentVideo(msg.room.currentVideoLink);
+      setPlaylist(msg.room.playList);
+    });
+    socket.on('deleteVideoFromPlaylist', (msg) => {
+      setPlaylist(msg.playlist);
     });
     socket.on('syncVideo', (msg) => {
       if (!isHost) {
@@ -52,5 +61,11 @@ export const useVideoSync = (
       socket.off('syncVideo');
     };
   }, []);
-  return { syncVideo, currentVideo, changeCurrentVideo, isHost };
+  return {
+    syncVideo,
+    currentVideo,
+    changeCurrentVideo,
+    isHost,
+    deleteVideoFromPlaylist,
+  };
 };

@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-import { showUp } from '../../styles/animations';
+import { leftSideShowUp } from '../../styles/animations';
 
 export const Header = styled.header`
   height: 60px;
@@ -12,5 +12,5 @@ export const Header = styled.header`
 
 export const AppTitle = styled.h4`
   font-size: 30px;
-  animation: ${showUp} 1000ms forwards;
+  animation: ${leftSideShowUp()} 1000ms forwards;
 `;

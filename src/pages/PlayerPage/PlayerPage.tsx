@@ -3,19 +3,28 @@ import {
   defer,
   Await,
   LoaderFunctionArgs,
+  useParams,
 } from 'react-router-dom';
-import { Suspense } from 'react';
+import { FormEvent, Suspense, useEffect, useState } from 'react';
 import axios from 'axios';
 import ReactPlayer from 'react-player';
 import { BASE, ROOM_API } from '../../api/consts';
 
 import * as S from './styled';
 import './styles.css';
-import { ChatForm, MessageItem, SubmitVideoForm } from '../../components';
+import {
+  ChatForm,
+  MessageItem,
+  Playlist,
+  SubmitVideoForm,
+  TabsSwitcher,
+  VideoCardPreview,
+} from '../../components';
 import {
   useSocketInit,
   useVideoChat,
-  useVideoControll,
+  useVideoControl,
+  useVideoPlaylist,
   useVideoSync,
 } from '../../hooks';
 
@@ -29,29 +38,36 @@ interface LoaderData {
   };
 }
 
+export enum tabs {
+  CHAT = 'CHAT',
+  PLAYLIST = 'PLAYLIST',
+}
+
 export const PlayerPage = () => {
   const { data } = useLoaderData() as LoaderData;
+
+  const [activeTab, setActiveTab] = useState<tabs>(tabs.CHAT);
+
+  const { id: roomId } = useParams();
+
   const { socket } = useSocketInit();
 
   const { isPlaying, pauseVideo, playVideo, playerRef } =
-    useVideoControll(socket);
+    useVideoControl(socket);
 
-  const { syncVideo, currentVideo, changeCurrentVideo, isHost } = useVideoSync(
-    socket,
-    playerRef
-  );
+  const { playlist, setPlaylist } = useVideoPlaylist(socket);
 
+  const {
+    syncVideo,
+    currentVideo,
+    changeCurrentVideo,
+    isHost,
+    deleteVideoFromPlaylist,
+  } = useVideoSync(socket, playerRef, setPlaylist);
   const { messagesList, messageContainerRef } = useVideoChat(socket);
 
   return (
     <S.PageContainer>
-      {isHost && (
-        <SubmitVideoForm
-          inputFormCss={`border:none`}
-          inputCss={'flex:1'}
-          onSubmit={changeCurrentVideo}
-        />
-      )}
       <Suspense fallback={<S.SkeletonPlayerWrapper />}>
         <Await resolve={data}>
           {(resolvedData) => {
@@ -80,16 +96,30 @@ export const PlayerPage = () => {
         </Await>
       </Suspense>
       <S.ChatContainer>
-        <S.MessageContainer ref={messageContainerRef}>
-          {messagesList?.map((item: any, index: number) => {
-            return <MessageItem messageData={item} key={index} />;
-          })}
-        </S.MessageContainer>
-        <Suspense fallback={<S.SkeletonChatForm />}>
-          <Await resolve={data}>
-            <ChatForm socket={socket} />
-          </Await>
-        </Suspense>
+        <TabsSwitcher activeTab={activeTab} onClick={setActiveTab} />
+        {activeTab === tabs.CHAT && (
+          <>
+            <S.MessageContainer ref={messageContainerRef}>
+              {messagesList?.map((item: any, index: number) => {
+                return <MessageItem messageData={item} key={index} />;
+              })}
+            </S.MessageContainer>
+            <Suspense fallback={<S.SkeletonChatForm />}>
+              <Await resolve={data}>
+                <ChatForm socket={socket} />
+              </Await>
+            </Suspense>
+          </>
+        )}
+        {activeTab === tabs.PLAYLIST && (
+          <Playlist
+            deleteVideoFromPlaylist={deleteVideoFromPlaylist}
+            changeCurrentVideo={changeCurrentVideo}
+            socket={socket}
+            isHost={!!isHost}
+            playlist={playlist}
+          />
+        )}
       </S.ChatContainer>
     </S.PageContainer>
   );

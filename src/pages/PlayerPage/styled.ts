@@ -1,7 +1,7 @@
 import styled from 'styled-components';
 import { device } from '../../styles/media';
 import { ChatForm } from '../../components/ChatForm/styled';
-import { showUp, skeletonAnimation } from '../../styles/animations';
+import { leftSideShowUp, skeletonAnimation } from '../../styles/animations';
 
 export const PageContainer = styled.div`
   background-color: ${({ theme }) => theme.colors.black};
@@ -17,7 +17,7 @@ export const PageContainer = styled.div`
 `;
 
 export const PlayerWrapper = styled.div`
-  animation: ${showUp} 1000ms forwards;
+  animation: ${leftSideShowUp()} 1000ms forwards;
   position: relative;
   padding-top: 56.25%;
 
@@ -49,6 +49,7 @@ export const ChatContainer = styled.div`
 export const MessageContainer = styled.div`
   overflow-y: auto;
   flex: 1;
+  animation: ${leftSideShowUp()} 1000ms forwards;
 `;
 
 export const UserNameForm = styled.form`

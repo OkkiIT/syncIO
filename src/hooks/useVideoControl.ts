@@ -3,10 +3,10 @@ import { useEffect, useRef, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import ReactPlayer from 'react-player';
 
-export const useVideoControll = (socket: Socket) => {
+export const useVideoControl = (socket: Socket) => {
   const { id: roomId } = useParams();
 
-  const [isPlaying, setIsPlaying] = useState<boolean>(false);
+  const [isPlaying, setIsPlaying] = useState<boolean>(true);
   const playerRef = useRef<ReactPlayer>(null);
 
   const pauseVideo = () => {
