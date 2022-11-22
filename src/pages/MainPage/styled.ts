@@ -1,5 +1,5 @@
 import styled, { css } from 'styled-components';
-import { showUp } from '../../styles/animations';
+import { leftSideShowUp } from '../../styles/animations';
 
 export const Wrapper = styled.main`
   width: 100%;
@@ -11,7 +11,7 @@ export const Wrapper = styled.main`
   flex-direction: column;
 `;
 export const DescriptionContainer = styled.div`
-  animation: ${showUp} 1000ms forwards;
+  animation: ${leftSideShowUp()} 1000ms forwards;
   display: flex;
   flex-direction: column;
   align-self: flex-start;
@@ -40,7 +40,7 @@ export const InputForm = styled.form`
 
   display: flex;
   opacity: 0;
-  animation: ${showUp} 1000ms forwards 500ms;
+  animation: ${leftSideShowUp()} 1000ms forwards 500ms;
   padding: 10px 15px;
   gap: 8px;
   border-radius: 20px;

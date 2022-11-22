@@ -1,12 +1,13 @@
 import * as S from './styled';
 import { ChangeEvent, FormEvent, useState } from 'react';
 import { youtubeRegExp } from '../../utils/reg-exp';
+import { FlattenSimpleInterpolation } from 'styled-components';
 
 interface SubmitVideoFormProps {
   onSubmit(e: FormEvent, value: string): void;
 
-  inputCss?: string;
-  inputFormCss?: string;
+  inputCss?: FlattenSimpleInterpolation;
+  inputFormCss?: FlattenSimpleInterpolation;
 }
 
 export const SubmitVideoForm = ({
