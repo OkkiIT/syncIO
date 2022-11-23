@@ -45,15 +45,17 @@ export const Playlist = ({
               />
             ))}
           </S.CardsContainer>
-          <SubmitVideoForm
-            inputFormCss={css`
-              border: none;
-            `}
-            inputCss={css`
-              flex: 1;
-            `}
-            onSubmit={kek}
-          />
+          {isHost && (
+            <SubmitVideoForm
+              inputFormCss={css`
+                border: none;
+              `}
+              inputCss={css`
+                flex: 1;
+              `}
+              onSubmit={kek}
+            />
+          )}
         </>
       )}
       {!playlist.length && (
