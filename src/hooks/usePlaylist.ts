@@ -1,41 +1,67 @@
 import { useEffect, useState } from 'react';
 import { Socket } from 'socket.io-client';
 import { useParams } from 'react-router-dom';
+import {
+  AddVideoToPlaylistMessage,
+  BasicMessage,
+  DeleteVideoFromPlaylistMessage,
+  GetPlaylistData,
+  PlayVideoFromPlaylistData,
+  PlayVideoFromPlaylistMessage,
+} from '../types/socketMessages';
+import { Playlist } from '../types';
 
 interface PlaylistParams {
   socket: Socket;
-  setCurrentVideo: any;
+  setCurrentVideo: (value: string) => void;
 }
 
 export const usePlaylist = ({ socket, setCurrentVideo }: PlaylistParams) => {
-  const { id: roomId } = useParams();
-  const [playlist, setPlaylist] = useState<any>([]);
-  const changeCurrentVideo = (videoId: string) => {
-    socket.emit('playVideoFromPlaylist', { roomId, videoId });
+  const { id: roomId } = useParams() as { id: string };
+  const [playlist, setPlaylist] = useState<Playlist[]>([]);
+
+  const changeCurrentVideo = (videoId: string): void => {
+    const message: PlayVideoFromPlaylistMessage = { roomId, videoId };
+
+    socket.emit('playVideoFromPlaylist', message);
   };
 
-  const addVideoToPlaylist = (e: any, inputValue: string) => {
+  const addVideoToPlaylist = (e: any, inputValue: string): void => {
     e.preventDefault();
-    socket.emit('addVideoToPlaylist', { roomId, videoLink: inputValue.trim() });
+
+    const message: AddVideoToPlaylistMessage = {
+      roomId,
+      videoLink: inputValue.trim(),
+    };
+
+    socket.emit('addVideoToPlaylist', message);
   };
-  const deleteVideoFromPlaylist = (videoId: string) => {
-    socket.emit('deleteVideoFromPlaylist', { roomId, videoId });
+  const deleteVideoFromPlaylist = (videoId: string): void => {
+    const message: DeleteVideoFromPlaylistMessage = { roomId, videoId };
+
+    socket.emit('deleteVideoFromPlaylist', message);
   };
   useEffect(() => {
     socket.on('connect', () => {
-      socket.emit('getPlaylist', { roomId });
+      const message: BasicMessage = { roomId };
+
+      socket.emit('getPlaylist', message);
     });
-    socket.on('playVideoFromPlaylist', (msg) => {
-      setCurrentVideo(msg.room.currentVideoLink);
-      setPlaylist(msg.room.playList);
+    socket.on('playVideoFromPlaylist', (msg: PlayVideoFromPlaylistData) => {
+      const {
+        room: { currentVideoLink, playList },
+      } = msg;
+
+      setCurrentVideo(currentVideoLink);
+      setPlaylist(playList);
     });
-    socket.on('getPlaylist', (msg) => {
+    socket.on('getPlaylist', (msg: GetPlaylistData) => {
       setPlaylist(msg.playlist);
     });
-    socket.on('addVideoToPlaylist', (msg) => {
+    socket.on('addVideoToPlaylist', (msg: GetPlaylistData) => {
       setPlaylist(msg.playlist);
     });
-    socket.on('deleteVideoFromPlaylist', (msg) => {
+    socket.on('deleteVideoFromPlaylist', (msg: GetPlaylistData) => {
       setPlaylist(msg.playlist);
     });
     return () => {

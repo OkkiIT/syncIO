@@ -8,9 +8,9 @@ import { Playlist } from '../Playlist';
 import { useChatScroll, usePlaylist, useVideoChat } from '../../hooks';
 import { Socket } from 'socket.io-client';
 
-interface Interface {
-  isHost: any;
-  setCurrentVideo: any;
+interface PlayerTabsProps {
+  isHost: boolean;
+  setCurrentVideo: (value: string) => void;
   data: any;
   socket: Socket;
 }
@@ -25,7 +25,7 @@ export const PlayerTabs = ({
   isHost,
   data,
   socket,
-}: Interface) => {
+}: PlayerTabsProps) => {
   const [activeTab, setActiveTab] = useState<tabs>(tabs.CHAT);
   const { messagesList, messageContainerRef } = useVideoChat(socket);
   const {
@@ -42,8 +42,8 @@ export const PlayerTabs = ({
       {activeTab === tabs.CHAT && (
         <>
           <S.MessageContainer ref={messageContainerRef}>
-            {messagesList?.map((item: any, index: number) => {
-              return <MessageItem messageData={item} key={index} />;
+            {messagesList.map((item, index: number) => {
+              return <MessageItem messageItem={item} key={index} />;
             })}
           </S.MessageContainer>
           <Suspense fallback={<S.SkeletonChatForm />}>

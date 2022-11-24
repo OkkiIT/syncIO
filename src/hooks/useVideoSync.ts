@@ -4,31 +4,33 @@ import { getCookie } from '../utils/common';
 import ReactPlayer from 'react-player';
 import { useParams } from 'react-router-dom';
 import { OnProgressProps } from 'react-player/types/base';
+import { SyncVideoData, SyncVideoMessage } from '../types/socketMessages';
 
 export const useVideoSync = (
   socket: Socket,
   playerRef: RefObject<ReactPlayer>
 ) => {
-  const { id: roomId } = useParams();
+  const { id: roomId } = useParams() as { id: string };
 
   const [currentVideo, setCurrentVideo] = useState<string>('');
   const [isHost] = useState<boolean>(() => !!getCookie('roomId'));
 
   const syncVideo = (e: OnProgressProps) => {
     if (isHost) {
-      socket.emit('syncVideo', {
+      const message: SyncVideoMessage = {
         roomId,
         currentTimePlayed: e.playedSeconds,
         sendTime: Date.now(),
-      });
+      };
+      socket.emit('syncVideo', message);
     }
   };
 
   useEffect(() => {
-    socket.on('syncVideo', (msg) => {
+    socket.on('syncVideo', (msg: SyncVideoData) => {
       if (!isHost) {
-        const hostSendTime = msg.sendTime;
-        const hostPlayerTime = +msg.currentTimePlayed;
+        const { currentTimePlayed: hostPlayerTime, sendTime: hostSendTime } =
+          msg;
         const currentPlayerTime = Number(
           playerRef?.current?.getCurrentTime() || 1
         );

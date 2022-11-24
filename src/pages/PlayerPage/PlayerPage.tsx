@@ -39,7 +39,6 @@ export const PlayerPage = () => {
       <Suspense fallback={<S.SkeletonPlayerWrapper />}>
         <Await resolve={data}>
           {(resolvedData) => {
-            console.log(resolvedData);
             return (
               <S.PlayerWrapper>
                 <S.Player

@@ -4,6 +4,7 @@ import * as S from './styled';
 import { useAsyncValue, useParams } from 'react-router-dom';
 import { getSendingTime } from '../../utils/common';
 import { Socket } from 'socket.io-client';
+import { ChatMessage } from '../../types/socketMessages';
 
 interface ChatFormProps {
   socket: Socket;
@@ -11,7 +12,7 @@ interface ChatFormProps {
 
 export const ChatForm = ({ socket }: ChatFormProps) => {
   const { userName } = useAsyncValue() as { userName: string };
-  const { id: roomId } = useParams();
+  const { id: roomId } = useParams() as { id: string };
   const [message, setMessage] = useState<string>('');
 
   const emptyMessage = !message.trim();
@@ -22,7 +23,8 @@ export const ChatForm = ({ socket }: ChatFormProps) => {
       return;
     }
     const sendTime = getSendingTime();
-    socket.emit('chatMessage', { roomId, message, userName, sendTime });
+    const chatMessage: ChatMessage = { roomId, message, userName, sendTime };
+    socket.emit('chatMessage', chatMessage);
     setMessage('');
   };
 
