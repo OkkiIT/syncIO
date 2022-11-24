@@ -1,7 +1,7 @@
 import * as S from './styled';
-import { tabs } from '../../pages/PlayerPage/PlayerPage';
 import { ReactComponent as PlaylistIconSvg } from '../../assets/playlistIcon.svg';
 import { ReactComponent as ChatIconSvg } from '../../assets/chatIcon.svg';
+import { tabs } from '../PlayerTabs/PlayerTabs';
 
 const tabsArr = [
   { tabName: tabs.CHAT, Icon: ChatIconSvg, label: 'Chat' },

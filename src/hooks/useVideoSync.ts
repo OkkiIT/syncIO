@@ -1,20 +1,20 @@
-import { FormEvent, RefObject, useEffect, useState } from 'react';
+import { RefObject, useEffect, useState } from 'react';
 import { Socket } from 'socket.io-client';
 import { getCookie } from '../utils/common';
 import ReactPlayer from 'react-player';
 import { useParams } from 'react-router-dom';
+import { OnProgressProps } from 'react-player/types/base';
 
 export const useVideoSync = (
   socket: Socket,
-  playerRef: RefObject<ReactPlayer>,
-  setPlaylist: any
+  playerRef: RefObject<ReactPlayer>
 ) => {
-  const [currentVideo, setCurrentVideo] = useState<string>('');
-  const [isHost] = useState(() => getCookie('roomId'));
-
   const { id: roomId } = useParams();
 
-  const syncVideo = (e: any) => {
+  const [currentVideo, setCurrentVideo] = useState<string>('');
+  const [isHost] = useState<boolean>(() => !!getCookie('roomId'));
+
+  const syncVideo = (e: OnProgressProps) => {
     if (isHost) {
       socket.emit('syncVideo', {
         roomId,
@@ -24,23 +24,7 @@ export const useVideoSync = (
     }
   };
 
-  const changeCurrentVideo = (videoId: string) => {
-    socket.emit('playVideoFromPlaylist', { roomId, videoId });
-  };
-
-  const deleteVideoFromPlaylist = (videoId: string) => {
-    socket.emit('deleteVideoFromPlaylist', { roomId, videoId });
-  };
-
   useEffect(() => {
-    socket.on('playVideoFromPlaylist', (msg) => {
-      console.log(msg);
-      setCurrentVideo(msg.room.currentVideoLink);
-      setPlaylist(msg.room.playList);
-    });
-    socket.on('deleteVideoFromPlaylist', (msg) => {
-      setPlaylist(msg.playlist);
-    });
     socket.on('syncVideo', (msg) => {
       if (!isHost) {
         const hostSendTime = msg.sendTime;
@@ -57,15 +41,13 @@ export const useVideoSync = (
       }
     });
     return () => {
-      socket.off('changeVideo');
       socket.off('syncVideo');
     };
   }, []);
   return {
     syncVideo,
+    setCurrentVideo,
     currentVideo,
-    changeCurrentVideo,
     isHost,
-    deleteVideoFromPlaylist,
   };
 };

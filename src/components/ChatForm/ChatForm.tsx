@@ -21,9 +21,8 @@ export const ChatForm = ({ socket }: ChatFormProps) => {
     if (emptyMessage) {
       return;
     }
-    const sendingTime = getSendingTime();
-
-    socket.emit('chatMessage', { roomId, message, userName, sendingTime });
+    const sendTime = getSendingTime();
+    socket.emit('chatMessage', { roomId, message, userName, sendTime });
     setMessage('');
   };
 

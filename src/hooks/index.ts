@@ -4,10 +4,10 @@ import { useVideoControl } from './useVideoControl';
 import { useVideoSync } from './useVideoSync';
 import { useVideoChat } from './useVideoChat';
 import { useSocketInit } from './useSocketInit';
-import { useVideoPlaylist } from './useVideoPlaylist';
+import { usePlaylist } from './usePlaylist';
 
 export {
-  useVideoPlaylist,
+  usePlaylist,
   useSocketInit,
   useMedia,
   useChatScroll,

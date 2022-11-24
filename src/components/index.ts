@@ -5,8 +5,10 @@ import { SubmitVideoForm } from './SubmitVideoForm';
 import { TabsSwitcher } from './TabsSwitcher';
 import { VideoCardPreview } from './VideoCardPreview';
 import { Playlist } from './Playlist';
+import { PlayerTabs } from './PlayerTabs';
 
 export {
+  PlayerTabs,
   Playlist,
   Header,
   MessageItem,
