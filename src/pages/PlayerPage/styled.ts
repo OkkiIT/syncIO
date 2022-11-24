@@ -2,6 +2,7 @@ import styled from 'styled-components';
 import { device } from '../../styles/media';
 import { ChatForm } from '../../components/ChatForm/styled';
 import { leftSideShowUp, skeletonAnimation } from '../../styles/animations';
+import YouTubePlayer from 'react-player/youtube';
 
 export const PageContainer = styled.div`
   background-color: ${({ theme }) => theme.colors.black};
@@ -14,6 +15,12 @@ export const PageContainer = styled.div`
     flex-direction: row;
   }
 }
+`;
+
+export const Player = styled(YouTubePlayer)`
+  position: absolute;
+  top: 0;
+  left: 0;
 `;
 
 export const PlayerWrapper = styled.div`
@@ -34,14 +41,14 @@ export const SkeletonChatForm = styled(ChatForm)`
   ${skeletonAnimation};
 `;
 
-export const ChatContainer = styled.div`
+export const TabsContainer = styled.div`
   overflow-y: auto;
   display: flex;
   flex-direction: column;
   flex: 1;
 
   @media screen and ${device.lg} {
-    max-width: 300px;
+    max-width: 350px;
     border-left: 1px solid ${({ theme }) => theme.colors.lightBlack};
   }
 `;

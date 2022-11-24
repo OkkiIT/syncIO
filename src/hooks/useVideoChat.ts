@@ -9,8 +9,8 @@ export const useVideoChat = (socket: Socket) => {
   const messageContainerRef = useChatScroll(messagesList);
 
   useEffect(() => {
-    socket.on('chatMessage', (msg) => {
-      setMessagesList((prev: any) => {
+    socket.on('chatMessage', (msg: MessageItem) => {
+      setMessagesList((prev) => {
         return [...prev, msg];
       });
     });

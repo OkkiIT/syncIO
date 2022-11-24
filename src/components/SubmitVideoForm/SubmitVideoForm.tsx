@@ -1,7 +1,7 @@
 import * as S from './styled';
 import { ChangeEvent, FormEvent, useState } from 'react';
-import { youtubeRegExp } from '../../utils/reg-exp';
 import { FlattenSimpleInterpolation } from 'styled-components';
+import YouTubePlayer from 'react-player/youtube';
 
 interface SubmitVideoFormProps {
   onSubmit(e: FormEvent, value: string): void;
@@ -26,7 +26,7 @@ export const SubmitVideoForm = ({
     setInputValue('');
   };
 
-  const isYoutubeLink = youtubeRegExp.test(inputValue.trim());
+  const isPlayable = YouTubePlayer.canPlay(inputValue.trim());
 
   return (
     <S.InputForm css={inputFormCss} onSubmit={onFormSubmit}>
@@ -38,8 +38,8 @@ export const SubmitVideoForm = ({
         type="text"
       />
       <S.Button
-        disabled={!isYoutubeLink}
-        isYoutubeLink={isYoutubeLink}
+        disabled={!isPlayable}
+        isYoutubeLink={isPlayable}
         onClick={onFormSubmit}
         type="submit"
       >

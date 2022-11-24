@@ -1,9 +1,9 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect } from 'react';
 
 export enum SCREEN_TYPES {
-  XS = "xs",
-  M = "m",
-  LG = "lg",
+  XS = 'xs',
+  M = 'm',
+  LG = 'lg',
 }
 
 const MOBILE_SIZES = {
@@ -17,24 +17,22 @@ const TABLE_SIZES = {
 };
 
 export function useMedia() {
-  const [windowDimensions, setWindowDimensions] = useState<SCREEN_TYPES | null>(
-    getDeviceTypeBySize
-  );
+  const [windowDimensions, setWindowDimensions] =
+    useState<SCREEN_TYPES>(getDeviceTypeBySize);
 
   useEffect(() => {
     function handleResize() {
       setWindowDimensions(getDeviceTypeBySize());
     }
 
-    window.addEventListener("resize", handleResize);
-    return () => window.removeEventListener("resize", handleResize);
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
   }, []);
 
   return windowDimensions;
 }
 
 const getDeviceTypeBySize = (): SCREEN_TYPES => {
-  console.log("hi");
   const { innerWidth } = window;
   if (innerWidth <= MOBILE_SIZES.MAX) {
     return SCREEN_TYPES.XS;

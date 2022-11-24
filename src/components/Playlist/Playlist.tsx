@@ -8,29 +8,25 @@ import { css } from 'styled-components';
 interface PlaylistProps {
   playlist: any;
   isHost: boolean;
-  socket: Socket;
   changeCurrentVideo: any;
   deleteVideoFromPlaylist: any;
+  addVideoToPlaylist: any;
+  playlistContainerRef: any;
 }
 
 export const Playlist = ({
   playlist,
   isHost,
-  socket,
   changeCurrentVideo,
   deleteVideoFromPlaylist,
+  playlistContainerRef,
+  addVideoToPlaylist,
 }: PlaylistProps) => {
-  const { id: roomId } = useParams();
-
-  const kek = (e: any, inputValue: string) => {
-    e.preventDefault();
-    socket.emit('addVideoToPlaylist', { roomId, videoLink: inputValue.trim() });
-  };
   return (
     <S.Container>
       {!!playlist.length && (
         <>
-          <S.CardsContainer>
+          <S.CardsContainer ref={playlistContainerRef}>
             {playlist.map((item: any) => (
               <VideoCardPreview
                 deleteVideoFromPlaylist={deleteVideoFromPlaylist}
@@ -53,7 +49,7 @@ export const Playlist = ({
               inputCss={css`
                 flex: 1;
               `}
-              onSubmit={kek}
+              onSubmit={addVideoToPlaylist}
             />
           )}
         </>
@@ -69,7 +65,7 @@ export const Playlist = ({
               inputCss={css`
                 flex: 1;
               `}
-              onSubmit={kek}
+              onSubmit={addVideoToPlaylist}
             />
           )}
         </S.EmptyMessageContainer>

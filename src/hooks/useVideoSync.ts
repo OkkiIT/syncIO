@@ -1,50 +1,36 @@
-import { FormEvent, RefObject, useEffect, useState } from 'react';
+import { RefObject, useEffect, useState } from 'react';
 import { Socket } from 'socket.io-client';
 import { getCookie } from '../utils/common';
 import ReactPlayer from 'react-player';
 import { useParams } from 'react-router-dom';
+import { OnProgressProps } from 'react-player/types/base';
+import { SyncVideoData, SyncVideoMessage } from '../types/socketMessages';
 
 export const useVideoSync = (
   socket: Socket,
-  playerRef: RefObject<ReactPlayer>,
-  setPlaylist: any
+  playerRef: RefObject<ReactPlayer>
 ) => {
+  const { id: roomId } = useParams() as { id: string };
+
   const [currentVideo, setCurrentVideo] = useState<string>('');
-  const [isHost] = useState(() => getCookie('roomId'));
+  const [isHost] = useState<boolean>(() => !!getCookie('roomId'));
 
-  const { id: roomId } = useParams();
-
-  const syncVideo = (e: any) => {
+  const syncVideo = (e: OnProgressProps) => {
     if (isHost) {
-      socket.emit('syncVideo', {
+      const message: SyncVideoMessage = {
         roomId,
         currentTimePlayed: e.playedSeconds,
         sendTime: Date.now(),
-      });
+      };
+      socket.emit('syncVideo', message);
     }
   };
 
-  const changeCurrentVideo = (videoId: string) => {
-    socket.emit('playVideoFromPlaylist', { roomId, videoId });
-  };
-
-  const deleteVideoFromPlaylist = (videoId: string) => {
-    socket.emit('deleteVideoFromPlaylist', { roomId, videoId });
-  };
-
   useEffect(() => {
-    socket.on('playVideoFromPlaylist', (msg) => {
-      console.log(msg);
-      setCurrentVideo(msg.room.currentVideoLink);
-      setPlaylist(msg.room.playList);
-    });
-    socket.on('deleteVideoFromPlaylist', (msg) => {
-      setPlaylist(msg.playlist);
-    });
-    socket.on('syncVideo', (msg) => {
+    socket.on('syncVideo', (msg: SyncVideoData) => {
       if (!isHost) {
-        const hostSendTime = msg.sendTime;
-        const hostPlayerTime = +msg.currentTimePlayed;
+        const { currentTimePlayed: hostPlayerTime, sendTime: hostSendTime } =
+          msg;
         const currentPlayerTime = Number(
           playerRef?.current?.getCurrentTime() || 1
         );
@@ -57,15 +43,13 @@ export const useVideoSync = (
       }
     });
     return () => {
-      socket.off('changeVideo');
       socket.off('syncVideo');
     };
   }, []);
   return {
     syncVideo,
+    setCurrentVideo,
     currentVideo,
-    changeCurrentVideo,
     isHost,
-    deleteVideoFromPlaylist,
   };
 };
